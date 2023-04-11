@@ -1,0 +1,122 @@
+package valetinho;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import java.util.ArrayList;
+
+public class Estacionamento {
+	 private String[] ocupadas;
+	 private String[] placas;
+	 private int totalVagas;
+	 private ArrayList<Integer> vagasLivres;
+	    
+	    // Construtor
+	    public Estacionamento(int numVagas) {
+	        this.totalVagas = numVagas;
+	        this.ocupadas = new String[numVagas]; 
+	    }
+	    
+	    
+	 // Grava os dados do array ocupadas no arquivo "placas.csv"
+	    public void gravarDados() {
+	        try {
+	            BufferedWriter writer = new BufferedWriter(new FileWriter("placas.csv"));
+	            PrintWriter printWriter = new PrintWriter(writer);
+	            for (int i = 0; i < totalVagas; i++) {
+	                if (ocupadas[i] != null) {
+	                    printWriter.println((i + 1) + "," + ocupadas[i]);
+	                }
+	            }
+	            printWriter.close();
+	        } catch (IOException e) {
+	            System.out.println("Erro ao gravar os dados no arquivo: " + e.getMessage());
+	        }
+	    }
+	    
+	    
+	    // Métodos
+	    
+	    // Lê os dados do arquivo "placas.csv"
+	    public void lerDados() {
+	        try {
+	            BufferedReader reader = new BufferedReader(new FileReader("placas.csv"));
+	            String line;
+	            while ((line = reader.readLine()) != null) {
+	                String[] data = line.split(",");
+	                int vaga = Integer.parseInt(data[0]);
+	                String placa = data[1];
+	                ocupadas[vaga - 1] = placa;
+	            }
+	            reader.close();
+	        } catch (IOException e) {
+	            System.out.println("Erro ao ler os dados do arquivo: " + e.getMessage());
+	        }
+	    }
+	    
+	    public void entrar(String placa, int vaga) {
+	        if (vaga > 0 && vaga <= totalVagas && placas[vaga - 1].equals("livre")) {
+	            placas[vaga - 1] = placa;
+	            vagasLivres.remove(Integer.valueOf(vaga));
+	            gravarDados();
+	        } else {
+	            System.out.println("Vaga inválida ou ocupada");
+	        }
+	    }
+	    
+	    public void sair(int vaga) {
+	        if (vaga > 0 && vaga <= totalVagas && !placas[vaga - 1].equals("livre")) {
+	            placas[vaga - 1] = "livre";
+	            vagasLivres.add(vaga);
+	            gravarDados();
+	        } else {
+	            System.out.println("Vaga inválida ou vazia");
+	        }
+	    }
+	    
+	    public int consultarPlaca(String placa) {
+	        for (int i = 0; i < totalVagas; i++) {
+	            if (placas[i].equals(placa)) {
+	                return i + 1;
+	            }
+	        }
+	        return -1; // Retorna -1 se a placa não for encontrada
+	    }
+	    
+	    public void transferir(int vagaOrigem, int vagaDestino) {
+	        if (vagaOrigem > 0 && vagaOrigem <= totalVagas && vagaDestino > 0 && vagaDestino <= totalVagas &&
+	                !placas[vagaOrigem - 1].equals("livre") && placas[vagaDestino - 1].equals("livre")) {
+	            placas[vagaDestino - 1] = placas[vagaOrigem - 1];
+	            placas[vagaOrigem - 1] = "livre";
+	            vagasLivres.remove(Integer.valueOf(vagaDestino));
+	            vagasLivres.add(vagaOrigem);
+	            gravarDados();
+	        } else {
+	            System.out.println("Vaga de origem ou destino inválida, ou vaga de origem ocupada ou vaga de destino não livre");
+	        }
+	    }
+	    
+	    // Método para listar o conteúdo de todas as vagas do estacionamento (placa ou "livre")
+	    public String[] listarGeral() {
+	        return placas;
+	    }
+	    
+	    public ArrayList<Integer> listarLivres() {
+	        ArrayList<Integer> vagasLivres = new ArrayList<>();
+	        for (int i = 0; i < placas.length; i++) {
+	            if (placas[i] == null) { // Verifica se a vaga está livre
+	                vagasLivres.add(i + 1); // Adiciona o número da vaga livre à lista
+	            }
+	        }
+	        return vagasLivres;
+	    }
+	    
+	    
+	 
+	// Construtor que inicializa o estacionamento com N vagas
+	    
+}

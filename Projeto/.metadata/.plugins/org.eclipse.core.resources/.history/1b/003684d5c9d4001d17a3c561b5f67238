@@ -1,0 +1,144 @@
+package valetinho;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+public class Estacionamento {
+	private String[] ocupadas;
+	private String[] placas;
+	private int totalVagas;
+	private ArrayList<Integer> vagasLivres;
+
+	// Construtor
+	public Estacionamento(int numVagas) {
+		this.totalVagas = numVagas;
+		this.ocupadas = new String[numVagas];
+		this.placas = new String[numVagas]; // Adicionando a inicialização do array de placas
+		this.vagasLivres = new ArrayList<>(); // Adicionando a inicialização da lista de vagas livres
+		for (int i = 0; i < numVagas; i++) {
+			placas[i] = "livre"; // Inicializando todas as vagas como "livre"
+			vagasLivres.add(i + 1); // Adicionando todas as vagas na lista de vagas livres
+		}
+	}
+
+	// Grava os dados do array ocupadas no arquivo "placas.csv"
+	public void gravarDados() {
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter("placas.csv"));
+			PrintWriter printWriter = new PrintWriter(writer);
+			for (int i = 0; i < totalVagas; i++) {
+				if (!placas[i].equals("livre")) {
+					printWriter.println((i + 1) + "," + placas[i]);
+				}
+			}
+			printWriter.close();
+		} catch (IOException e) {
+			System.out.println("Erro ao gravar os dados no arquivo: " + e.getMessage());
+		}
+	}
+
+	// Métodos
+
+	// Lê os dados do arquivo "placas.csv"
+	public void lerDados() {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("placas.csv"));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] data = line.split(",");
+				int vaga = Integer.parseInt(data[0]);
+				String placa = data[1];
+				placas[vaga - 1] = placa;
+				vagasLivres.remove(Integer.valueOf(vaga)); // Removendo a vaga lida da lista de vagas livres
+			}
+			reader.close();
+		} catch (IOException e) {
+			System.out.println("Erro ao ler os dados do arquivo: " + e.getMessage());
+		}
+	}
+
+	public void entrar(String placa, int vaga) {
+		if (vaga > 0 && vaga <= totalVagas && placas[vaga - 1].equals("livre")) {
+			placas[vaga - 1] = placa;
+			vagasLivres.remove(Integer.valueOf(vaga));
+			gravarDados();
+		} else {
+			System.out.println("Vaga inválida ou ocupada");
+		}
+	}
+
+	public void sair(int vaga) {
+		if (vaga > 0 && vaga <= totalVagas && !placas[vaga - 1].equals("livre")) {
+			placas[vaga - 1] = "livre";
+			vagasLivres.add(vaga);
+			gravarDados();
+		} else {
+			System.out.println("Vaga inválida ou vazia");
+		}
+	}
+
+	public int consultarPlaca(String placa) {
+		for (int i = 0; i < totalVagas; i++) {
+			if (placas[i].equals(placa)) {
+				return i + 1;
+			}
+		}
+		return -1;
+	}
+
+	public void exibirVagasLivres() {
+		System.out.print("Vagas livres: ");
+		for (Integer vaga : vagasLivres) {
+			System.out.print(vaga + " ");
+		}
+		System.out.println();
+	}
+
+	public void exibirVagasOcupadas() {
+		System.out.print("Vagas ocupadas: ");
+		for (int i = 0; i < totalVagas; i++) {
+			if (!placas[i].equals("livre")) {
+				System.out.print((i + 1) + ":" + placas[i] + " ");
+			}
+		}
+		System.out.println();
+	}
+
+	public static void main(String[] args) {
+		Estacionamento estacionamento = new Estacionamento(10); // Criando um estacionamento com 10 vagas
+
+		estacionamento.lerDados(); // Lendo os dados do arquivo
+
+		estacionamento.exibirVagasLivres(); // Exibindo as vagas livres
+		estacionamento.exibirVagasOcupadas(); // Exibindo as vagas ocupadas
+
+		estacionamento.entrar("ABC1234", 5); // Simulando um carro entrando na vaga 5 com placa ABC1234
+
+		estacionamento.exibirVagasLivres(); // Exibindo as vagas livres após a entrada do carro
+		estacionamento.exibirVagasOcupadas(); // Exibindo as vagas ocupadas após a entrada do carro
+
+		int vagaPlaca = estacionamento.consultarPlaca("ABC1234"); // Consultando a vaga de uma placa existente
+		if (vagaPlaca != -1) {
+			System.out.println("A placa ABC1234 está na vaga " + vagaPlaca);
+		} else {
+			System.out.println("A placa ABC1234 não foi encontrada no estacionamento");
+		}
+
+		int vagaPlacaInexistente = estacionamento.consultarPlaca("XYZ5678"); // Consultando a vaga de uma placa inexistente
+		if (vagaPlacaInexistente != -1) {
+			System.out.println("A placa XYZ5678 está na vaga " + vagaPlacaInexistente);
+		} else {
+			System.out.println("A placa XYZ5678 não foi encontrada no estacionamento");
+		}
+
+		estacionamento.sair(5); // Simulando um carro saindo da vaga 5
+
+		estacionamento.exibirVagasLivres(); // Exibindo as vagas livres após a saída do carro
+		estacionamento.exibirVagasOcupadas(); // Exibindo as vagas ocupadas após a saída do carro
+	}
+}

@@ -1,0 +1,21 @@
+package valetinho;
+
+import java.util.ArrayList;
+
+public class Estacionamento {
+	 private String[] placas;
+	 private int totalVagas;
+	 private ArrayList<Integer> vagasLivres;
+	 
+	// Construtor que inicializa o estacionamento com N vagas
+	    public Estacionamento(int n) {
+	        totalVagas = n;
+	        placas = new String[totalVagas];
+	        vagasLivres = new ArrayList<Integer>();
+	        for (int i = 0; i < totalVagas; i++) {
+	            placas[i] = "livre";
+	            vagasLivres.add(i + 1);
+	        }
+	        lerDados();
+	    }
+}

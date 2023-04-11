@@ -1,0 +1,162 @@
+package valetinho;
+
+import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JButton;
+import javax.swing.JTextField;
+
+@SuppressWarnings("serial")
+public class Valetinho extends JFrame {
+	public Valetinho() {
+	}
+
+	private Estacionamento estacionamento;
+    private JTextField textFieldVaga;
+    private JTextField textFieldPlaca;
+    private JTextArea textAreaOutput;
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Valetinho frame = new Valetinho();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	public class MeuActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+	        String command = e.getActionCommand();
+
+	        switch (command) {
+	            case "Entrada":
+	                try {
+	                    int vagaEntrada = Integer.parseInt(textFieldVaga.getText());
+	                    String placaEntrada = textFieldPlaca.getText();
+	                    estacionamento.entrar(placaEntrada, vagaEntrada);
+	                    textAreaOutput.append("Entrada registrada - Vaga: " + vagaEntrada + ", Placa: " + placaEntrada + "\n");
+	                } catch (NumberFormatException ex) {
+	                    JOptionPane.showMessageDialog(this, "Vaga inválida. Digite um número inteiro.", "Erro", JOptionPane.ERROR_MESSAGE);
+	                }
+	                break;
+	            case "Saída":
+	                try {
+	                    int vagaSaida = Integer.parseInt(textFieldVaga.getText());
+	                    estacionamento.sair(vagaSaida);
+	                    textAreaOutput.append("Saída registrada - Vaga: " + vagaSaida + "\n");
+	                } catch (NumberFormatException ex) {
+	                    JOptionPane.showMessageDialog(this, "Vaga inválida. Digite um número inteiro.", "Erro", JOptionPane.ERROR_MESSAGE);
+	                }
+	                break;
+	            case "Consulta de Placa":
+	                String placaConsulta = textFieldPlaca.getText();
+	                int vagaConsulta = estacionamento.consultarPlaca(placaConsulta);
+	                if (vagaConsulta != -1) {
+                    textAreaOutput.append("Placa " + placaConsulta + " está estacionada na Vaga " + vagaConsulta + "\n");
+                } else {
+                    textAreaOutput.append("Placa " + placaConsulta + " não encontrada no estacionamento\n");
+                }
+                break;
+            case "Transferência de Placa":
+                try {
+                    int vagaOrigem = Integer.parseInt(textFieldVaga.getText());
+                    int vagaDestino = Integer.parseInt(textFieldPlaca.getText());
+                    estacionamento.transferir(vagaOrigem, vagaDestino);
+                    textAreaOutput.append("Placa transferida da Vaga " + vagaOrigem + " para a Vaga " + vagaDestino + "\n");
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(this, "Vaga inválida. Digite um número inteiro.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+                break;
+            case "Listagem Geral":
+                String[] placas = estacionamento.listarGeral();
+                textAreaOutput.append("Listagem Geral:\n");
+                for (int i = 0; i < placas.length; i++) {
+                    textAreaOutput.append("Vaga " + (i + 1) + ": " + placas[i] + "\n");
+                }
+                break;
+            case "Listagem de Vagas Livres":
+                ArrayList<Integer> vagasLivres = estacionamento.listarLivres();
+                textAreaOutput.append("Listagem de Vagas Livres:\n");
+                for (Integer vaga : vagasLivres) {
+                    textAreaOutput.append("Vaga " + vaga + " está livre\n");
+                }
+                break;
+            default:
+                break;)
+}
+	
+	}
+
+	/**
+	 * Create the frame.
+	 * @return 
+	 */
+	   public void Valetinho(int numVagas) {
+	        estacionamento = new Estacionamento(numVagas);
+
+	        // Configurar a janela
+	        setTitle("Valetinho - Gerenciador de Estacionamento");
+	        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        setLayout(new FlowLayout());
+
+	        // Configurar os componentes da interface gráfica
+	        textFieldVaga = new JTextField(10);
+	        textFieldPlaca = new JTextField(10);
+	        textAreaOutput = new JTextArea(10, 20);
+	        textAreaOutput.setEditable(false);
+
+	        JButton buttonEntrada = new JButton("Entrada");
+	        JButton buttonSaida = new JButton("Saída");
+	        JButton buttonConsulta = new JButton("Consulta de Placa");
+	        JButton buttonTransferencia = new JButton("Transferência de Placa");
+	        JButton buttonListagemGeral = new JButton("Listagem Geral");
+	        JButton buttonListagemLivres = new JButton("Listagem de Vagas Livres");
+
+	        // Adicionar os componentes à janela
+	        add(new JLabel("Vaga: "));
+	        add(textFieldVaga);
+	        add(new JLabel("Placa: "));
+	        add(textFieldPlaca);
+	        add(buttonEntrada);
+	        add(buttonSaida);
+	        add(buttonConsulta);
+	        add(buttonTransferencia);
+	        add(buttonListagemGeral);
+	        add(buttonListagemLivres);
+	        add(new JScrollPane(textAreaOutput));
+
+	        // Adicionar os ouvintes de eventos aos botões
+	    	buttonEntrada.addActionListener(this);
+	        buttonSaida.addActionListener(this);
+	        buttonConsulta.addActionListener(this);
+	        buttonTransferencia.addActionListener(this);
+	        buttonListagemGeral.addActionListener(this);
+	        buttonListagemLivres.addActionListener(this);
+
+	        pack();
+	        setVisible(true);
+
+	   }
+	}
+}
+
+	    // Método para tratar os eventos dos botões
+	    
