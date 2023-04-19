@@ -28,12 +28,11 @@ public class Valetinho extends JFrame {
 
     public Valetinho(int numVagas) {
         estacionamento = new Estacionamento(numVagas);
-        // Configurar a janela
+ 
         setTitle("Valetinho - Gerenciador de Estacionamento");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-
-        // Configurar os componentes da interface gráfica
+        
         textFieldVaga = new JTextField(10);
         textFieldPlaca = new JTextField(10);
         textAreaOutput = new JTextArea(10, 20);
@@ -46,7 +45,6 @@ public class Valetinho extends JFrame {
         JButton buttonListagemGeral = new JButton("Listagem Geral");
         JButton buttonListagemLivres = new JButton("Listagem de Vagas Livres");
 
-        // Adicionar os componentes à janela
         JPanel panelInput = new JPanel();
         panelInput.add(new JLabel("Vaga: "));
         panelInput.add(textFieldVaga);
@@ -64,7 +62,7 @@ public class Valetinho extends JFrame {
         add(panelInput, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Adicionar os ActionListeners aos botões
+        
         buttonEntrada.addActionListener(new MeuActionListener());
         buttonSaida.addActionListener(new MeuActionListener());
         buttonConsulta.addActionListener(new MeuActionListener());
@@ -78,11 +76,11 @@ public class Valetinho extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Create and show the GUI
+
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-                // Specify the number of parking spaces as an argument
-                int numVagas = 10; // You can change this to the desired number of parking spaces
+               
+                int numVagas = 10;
                 new Valetinho(numVagas);
             }
         });
@@ -97,7 +95,7 @@ public class Valetinho extends JFrame {
 	        switch (command) {
 	            case "Entrada":
 	                try {
-	                	int numVagas = 10;
+	   
 	                    int vagaEntrada = Integer.parseInt(textFieldVaga.getText());
 	                    LocalDateTime agora = LocalDateTime.now();
 	                    DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
