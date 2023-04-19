@@ -4,6 +4,8 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -95,26 +97,41 @@ public class Valetinho extends JFrame {
 	        switch (command) {
 	            case "Entrada":
 	                try {
+	                	int numVagas = 10;
 	                    int vagaEntrada = Integer.parseInt(textFieldVaga.getText());
+	                    LocalDateTime agora = LocalDateTime.now();
+	                    DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
+	                    String dataHora = agora.format(formato);
 	                    String placaEntrada = textFieldPlaca.getText();
 	                    if (estacionamento.consultarPlaca(placaEntrada) != -1) {
 	                        JOptionPane.showMessageDialog(getComponent(0), "Placa já existe no estacionamento.", "Erro", JOptionPane.ERROR_MESSAGE);
-	                    } else {
-	                        estacionamento.entrar(placaEntrada, vagaEntrada);
-	                        textAreaOutput.append("Entrada registrada - Vaga: " + vagaEntrada + ", Placa: " + placaEntrada + "\n");
+	                        textAreaOutput.append("Vaga inválida ou ocupada");
+	                    }
+	                    else {
+	                        estacionamento.entrar(placaEntrada, vagaEntrada, dataHora);
+	                        textAreaOutput.append("Entrada registrada - Vaga: " + vagaEntrada + ", Placa: " + placaEntrada +   "em " + dataHora + "\n" );
 	                    }
 	                } catch (NumberFormatException ex) {
 	                    JOptionPane.showMessageDialog(getComponent(0), "Vaga inválida. Digite um número inteiro.", "Erro", JOptionPane.ERROR_MESSAGE);
+	                }catch (Exception ex) {
+	                    JOptionPane.showMessageDialog(getComponent(0), "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
 	                }
+	                
 	                break;
 	            case "Saída":
 	                try {
 	                    int vagaSaida = Integer.parseInt(textFieldVaga.getText());
-	                    estacionamento.sair(vagaSaida);
-	                    textAreaOutput.append("Saída registrada - Vaga: " + vagaSaida + "\n");
+	                    LocalDateTime agora = LocalDateTime.now();
+	                    DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
+	                    String dataHora = agora.format(formato);
+	                    estacionamento.sair(vagaSaida, dataHora);
+	                    textAreaOutput.append("Saída registrada - Vaga: " + vagaSaida + "em" + dataHora + "\n");
 	                } catch (NumberFormatException ex) {
 	                    JOptionPane.showMessageDialog(getComponent(0), "Vaga inválida. Digite um número inteiro.", "Erro", JOptionPane.ERROR_MESSAGE);
+	                }catch (Exception ex) {
+	                    JOptionPane.showMessageDialog(getComponent(0), "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
 	                }
+	                
 	                break;
 	            case "Consulta de Placa":
 	                String placaConsulta = textFieldPlaca.getText();
@@ -133,6 +150,8 @@ public class Valetinho extends JFrame {
                     textAreaOutput.append("Placa transferida da Vaga " + vagaOrigem + " para a Vaga " + vagaDestino + "\n");
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(getComponent(0), "Vaga inválida. Digite um número inteiro.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }catch (Exception ex) {
+                    JOptionPane.showMessageDialog(getComponent(0), "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
                 break;
             case "Listagem Geral":
